@@ -5,13 +5,6 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
 function App() {
   return (
     <BrowserRouter>
-      <nav>
-        <Link to='/'>Landing</Link>
-        <Link to='/about'>About</Link>
-        <Link to='/photos'>Photos</Link>
-        <Link to='/videos'>Videos</Link>
-        <Link to='/contact'>Contact</Link>
-      </nav>
       <Routes>
         <Route path='/' element={<SharedLayout />}>
           <Route path='about' element={<About />}></Route>
