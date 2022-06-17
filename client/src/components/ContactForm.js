@@ -1,11 +1,16 @@
 import Wrapper from "../assets/wrappers/ContactForm"
-import { useState } from "react"
-import { getQuestion } from "../features/form/contactFormSlice"
+import { useState, useEffect } from "react"
+import { getQuestion, answerQuestion } from "../features/form/contactFormSlice"
 import { useSelector, useDispatch } from "react-redux"
 
 const ContactForm = () => {
-  const { questionItem, isLoading } = useSelector((state) => state.contactForm)
+  const { questionItem, isLoading, questionAnsweredCorrectly } = useSelector(
+    (state) => state.contactForm
+  )
   const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getQuestion())
+  }, [])
 
   const [values, setValues] = useState({
     name: "",
@@ -13,12 +18,11 @@ const ContactForm = () => {
     email: "",
     phoneNumber: "",
     messageText: "",
+    answer: "",
   })
 
   const [submitted, setSubmitted] = useState(false)
   const [valid, setValid] = useState(false)
-  const [questionAnsweredCorrectly, setQuestionAnsweredCorrectly] =
-    useState(false)
 
   const handleFirstNameInputChange = (e) => {
     setValues({ ...values, name: e.target.value })
@@ -35,8 +39,16 @@ const ContactForm = () => {
   const handleMessageTextInputChange = (e) => {
     setValues({ ...values, messageText: e.target.value })
   }
-  const handleSubmit = (e) => {
+  const handleAnswerInputChange = (e) => {
+    setValues({ ...values, answer: e.target.value })
+  }
+
+  // const handleDispatches=async()=>{
+  //   await
+  // }
+  const handleSubmit = async (e) => {
     e.preventDefault()
+
     if (
       values.name &&
       values.lastName &&
@@ -44,36 +56,62 @@ const ContactForm = () => {
       values.phoneNumber &&
       values.messageText
     ) {
+      await dispatch(
+        answerQuestion({
+          question: questionItem.question,
+          answer: values.answer,
+        })
+      )
+      // while(isLoading){await new Promise(r => setTimeout(r, 2000));}
+      if (!questionAnsweredCorrectly) {
+        console.log(" if !questionAnsweredCorrectly", questionAnsweredCorrectly)
+        await dispatch(getQuestion())
+      }
+    }
+
+    console.log("outside questionAnsweredCorrectly", questionAnsweredCorrectly)
+
+    console.log("valid", valid)
+    if (
+      values.name &&
+      values.lastName &&
+      values.email &&
+      values.phoneNumber &&
+      values.messageText &&
+      questionAnsweredCorrectly
+    ) {
       setValid(true)
-    }
-    if (!questionAnsweredCorrectly) {
-      dispatch(getQuestion())
-    }
+    } else setValid(false)
+
     setSubmitted(true)
   }
   return (
     <Wrapper>
       <div className='form-container'>
-        {questionItem.question && (
-          <>
-            <p>{questionItem.question}</p>
-            <form>
-              <label for='answer-select'>Choose an answer:</label>
-
-              <select name='answer' id='answer-select'>
-                <option value=''>--Please choose an answer--</option>
-                {questionItem.answers.map((answer) => (
-                  <option value={answer}>{answer}</option>
-                ))}
-              </select>
-              <button className='form-field' type='submit'>
-                Send answer
-              </button>
-            </form>
-          </>
-        )}
         <form className='register-form' onSubmit={handleSubmit}>
           {isLoading && <div>Loading question...</div>}
+          {questionItem.question && (
+            <>
+              <p>{questionItem.question}</p>
+              <label htmlFor='answer-select'>Choose an answer:</label>
+
+              <select
+                name='answer'
+                id='answer-select'
+                onChange={handleAnswerInputChange}
+              >
+                <option value=''>--Please choose an answer--</option>
+                {questionItem.answers.map((answer, index) => (
+                  <option key={index} value={answer}>
+                    {answer}
+                  </option>
+                ))}
+              </select>
+              {submitted && !values.answer && (
+                <span id='answer-error'>Please choose an answer</span>
+              )}
+            </>
+          )}
           {submitted && valid && (
             <div className='success-message'>
               Success! Thank you for registering

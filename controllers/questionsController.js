@@ -24,7 +24,11 @@ const getQuestion = async (req, res) => {
   // let count = Question.countDocuments()
   // console.log("TO JEST COUNT: ", count)
   const projection = { question: 1, answers: 1 }
+
+  let count = Math.floor(Math.random() * 3)
   let result = await Question.findOne({}, { question: 1, answers: 1 })
+    .limit(-1)
+    .skip(count)
   console.log("TO JEST RESULT: ", result)
 
   // let result = await Question.find().limit(-1).skip(count).next()
@@ -56,7 +60,12 @@ const getQuestion = async (req, res) => {
 }
 
 const answerQuestion = async (req, res) => {
-  Question.checkAnswer(req.answer)
+  const question = await Question.findOne({
+    question: req.query.question,
+  })
+  console.log("req.query.answer", req.query.answer)
+  const result = question.checkAnswer(req.query.answer)
+  res.status(200).json({ result })
 }
 // const updateJob = async (req, res) => {
 //   const { id: jobId } = req.params

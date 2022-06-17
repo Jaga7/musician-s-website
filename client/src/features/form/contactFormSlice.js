@@ -7,6 +7,7 @@ const initialState = {
   showContactForm: false,
   isLoading: false,
   questionItem: { questionText: "", questionID: null },
+  questionAnsweredCorrectly: false,
 }
 
 export const getQuestion = createAsyncThunk(
@@ -14,7 +15,20 @@ export const getQuestion = createAsyncThunk(
   async (name, thunkAPI) => {
     try {
       const resp = await axios.get(url)
-      console.log("resp", resp)
+      return resp.data.result
+    } catch (error) {
+      return thunkAPI.rejectWithValue("something went wrong")
+    }
+  }
+)
+
+export const answerQuestion = createAsyncThunk(
+  "contactForm/answerQuestion",
+  async (questionAndAnswer, thunkAPI) => {
+    try {
+      const resp = await axios.post(
+        `${url}?question=${questionAndAnswer.question}&answer=${questionAndAnswer.answer}`
+      )
       return resp.data.result
     } catch (error) {
       return thunkAPI.rejectWithValue("something went wrong")
@@ -35,18 +49,24 @@ const contactFormSlice = createSlice({
       state.isLoading = true
     },
     [getQuestion.fulfilled]: (state, action) => {
-      console.log("ACTION", action)
       state.isLoading = false
-      console.log("PAYLOAD", action.payload)
       state.questionItem = action.payload
     },
     [getQuestion.rejected]: (state) => {
       state.isLoading = false
     },
+    [answerQuestion.pending]: (state) => {
+      state.isLoading = true
+    },
+    [answerQuestion.fulfilled]: (state, action) => {
+      state.isLoading = false
+      state.questionAnsweredCorrectly = action.payload
+    },
+    [answerQuestion.rejected]: (state) => {
+      state.isLoading = false
+    },
   },
 })
-
-// console.log(contactFormSlice)
 
 export const { toggleShowForm } = contactFormSlice.actions
 
