@@ -1,5 +1,6 @@
 import Wrapper from "../assets/wrappers/Navbar"
 import NavLinks from "./NavLinks"
+import ContactButton from "./ContactButton"
 
 const Navbar = () => {
   return (
@@ -7,12 +8,12 @@ const Navbar = () => {
       <div className='nav-center'>
         <div>
           <h3 className='logo-text'>Paul Engemann</h3>
+          <ContactButton></ContactButton>
         </div>
       </div>
 
       <div className={"navbar-container"}>
         <div className='nav-links'>
-          {/* <header>Paul Engemann</header> */}
           <NavLinks />
         </div>
       </div>

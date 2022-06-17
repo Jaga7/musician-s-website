@@ -13,10 +13,17 @@ const Wrapper = styled.main`
     display: block;
   } */
 
+  #imageDiv {
+    justify-self: center;
+  }
+
   h2 {
     font-weight: 700;
     justify-self: center;
     color: var(--primary-700);
+  }
+  p {
+    color: var(--primary-500);
   }
 
   main {

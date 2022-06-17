@@ -13,8 +13,8 @@ const Wrapper = styled.main`
     display: block;
   } */
 
-  h2 {
-    font-weight: 700;
+  h3 {
+    font-weight: 500;
     justify-self: center;
     color: var(--primary-700);
   }
@@ -24,6 +24,10 @@ const Wrapper = styled.main`
 
     justify-content: center;
     /* flex-wrap: wrap; */
+  }
+  iframe {
+    justify-self: center;
+    margin-bottom: 5rem;
   }
 `
 export default Wrapper

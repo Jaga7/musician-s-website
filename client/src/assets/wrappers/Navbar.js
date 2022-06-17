@@ -13,7 +13,7 @@ const Wrapper = styled.nav`
 
   .nav-links {
     display: grid;
-    grid-template-columns: auto auto auto auto auto;
+    grid-template-columns: repeat(3, auto);
     justify-content: center;
     margin-bottom: 0.5rem;
   }
@@ -26,20 +26,26 @@ const Wrapper = styled.nav`
     /* align-items: center; */
     /* justify-content: space-between; */
     margin: 1rem;
+    text-align: left;
   }
   background: var(--white);
 
   .logo-text {
-    display: none;
+    /* display: none; */
+    text-align: center;
     margin: 0;
   }
   @media (min-width: 992px) {
     position: sticky;
     top: 0;
 
-    .logo-text {
+    /* .logo-text {
       display: block;
-    }
+    } */
+  }
+  button {
+    width: fit-content;
+    margin-left: auto;
   }
 `
 export default Wrapper

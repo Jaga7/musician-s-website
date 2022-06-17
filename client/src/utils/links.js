@@ -1,6 +1,5 @@
 import { AiFillHome } from "react-icons/ai"
-import { AiOutlineInfo, AiFillVideoCamera, AiFillMessage } from "react-icons/ai"
-import { MdPhotoSizeSelectActual } from "react-icons/md"
+import { AiOutlineInfo, AiFillVideoCamera } from "react-icons/ai"
 
 const links = [
   {
@@ -17,21 +16,9 @@ const links = [
   },
   {
     id: 3,
-    text: "photos",
-    path: "photos",
-    icon: <MdPhotoSizeSelectActual />,
-  },
-  {
-    id: 4,
-    text: "videos",
+    text: "watch",
     path: "videos",
     icon: <AiFillVideoCamera />,
-  },
-  {
-    id: 5,
-    text: "contact",
-    path: "contact",
-    icon: <AiFillMessage />,
   },
 ]
 
