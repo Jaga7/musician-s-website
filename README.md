@@ -1,4 +1,4 @@
-# musician-s-website
+# A musician's website
 
 # Home Page
 ![image](https://user-images.githubusercontent.com/75665204/174432694-64de4cf0-836d-4e75-bf9b-8619f895ec93.png)
