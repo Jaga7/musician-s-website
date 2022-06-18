@@ -18,8 +18,6 @@ const QuestionSchema = new mongoose.Schema({
 })
 
 QuestionSchema.methods.checkAnswer = function (givenAnswer) {
-  console.log("givenAnswer", givenAnswer)
-  console.log("this.correctAnswer", this.correctAnswer)
   return givenAnswer === this.correctAnswer
 }
 

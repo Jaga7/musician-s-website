@@ -1,15 +1,28 @@
 import Wrapper from "../assets/wrappers/ContactForm"
 import { useState, useEffect } from "react"
-import { getQuestion, answerQuestion } from "../features/form/contactFormSlice"
+import {
+  getQuestion,
+  answerQuestion,
+  toggleShowForm,
+} from "../features/form/contactFormSlice"
 import { useSelector, useDispatch } from "react-redux"
 
 const ContactForm = () => {
   const { questionItem, isLoading, questionAnsweredCorrectly } = useSelector(
     (state) => state.contactForm
   )
+
+  function handleEscapeKey(event) {
+    if (event.code === "Escape") {
+      dispatch(toggleShowForm())
+    }
+  }
+
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getQuestion())
+    document.addEventListener("keydown", handleEscapeKey)
+    return () => document.removeEventListener("keydown", handleEscapeKey)
   }, [])
 
   const [values, setValues] = useState({
@@ -22,7 +35,7 @@ const ContactForm = () => {
   })
 
   const [submitted, setSubmitted] = useState(false)
-  const [valid, setValid] = useState(false)
+  // const [valid, setValid] = useState(false)
 
   const handleFirstNameInputChange = (e) => {
     setValues({ ...values, name: e.target.value })
@@ -43,9 +56,6 @@ const ContactForm = () => {
     setValues({ ...values, answer: e.target.value })
   }
 
-  // const handleDispatches=async()=>{
-  //   await
-  // }
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -54,34 +64,30 @@ const ContactForm = () => {
       values.lastName &&
       values.email &&
       values.phoneNumber &&
-      values.messageText
+      values.messageText &&
+      !questionAnsweredCorrectly
     ) {
-      await dispatch(
-        answerQuestion({
-          question: questionItem.question,
-          answer: values.answer,
-        })
-      )
-      // while(isLoading){await new Promise(r => setTimeout(r, 2000));}
-      if (!questionAnsweredCorrectly) {
-        console.log(" if !questionAnsweredCorrectly", questionAnsweredCorrectly)
-        await dispatch(getQuestion())
+      try {
+        const originalPromiseResult = await dispatch(
+          answerQuestion({
+            question: questionItem.question,
+            answer: values.answer,
+          })
+        ).unwrap()
+        if (originalPromiseResult === false) {
+          try {
+            const prevAnswerIndex = questionItem.answers.indexOf(values.answer)
+            const originalPromiseResult = await dispatch(getQuestion()).unwrap()
+            const currentAnswer = originalPromiseResult.answers[prevAnswerIndex]
+            setValues({ ...values, answer: currentAnswer })
+          } catch (rejectedValueOrSerializedError) {
+            throw Error(rejectedValueOrSerializedError)
+          }
+        }
+      } catch (rejectedValueOrSerializedError) {
+        throw Error(rejectedValueOrSerializedError)
       }
     }
-
-    console.log("outside questionAnsweredCorrectly", questionAnsweredCorrectly)
-
-    console.log("valid", valid)
-    if (
-      values.name &&
-      values.lastName &&
-      values.email &&
-      values.phoneNumber &&
-      values.messageText &&
-      questionAnsweredCorrectly
-    ) {
-      setValid(true)
-    } else setValid(false)
 
     setSubmitted(true)
   }
@@ -89,7 +95,7 @@ const ContactForm = () => {
     <Wrapper>
       <div className='form-container'>
         <form className='register-form' onSubmit={handleSubmit}>
-          {isLoading && <div>Loading question...</div>}
+          {isLoading && <div>Loading...</div>}
           {questionItem.question && (
             <>
               <p>{questionItem.question}</p>
@@ -112,10 +118,8 @@ const ContactForm = () => {
               )}
             </>
           )}
-          {submitted && valid && (
-            <div className='success-message'>
-              Success! Thank you for registering
-            </div>
+          {submitted && questionAnsweredCorrectly && (
+            <div className='success-message'>Success! Message sent</div>
           )}
           <input
             id='first-name'
@@ -177,7 +181,7 @@ const ContactForm = () => {
           )}
 
           <button className='form-field' type='submit'>
-            Register
+            Send
           </button>
         </form>
       </div>

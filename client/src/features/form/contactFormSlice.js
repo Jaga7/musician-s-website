@@ -13,6 +13,10 @@ const initialState = {
 export const getQuestion = createAsyncThunk(
   "contactForm/getQuestion",
   async (name, thunkAPI) => {
+    // if (thunkAPI.getState().contactForm.questionAnsweredCorrectly) {
+    //   return thunkAPI.rejectWithValue("answer is right")
+    // }
+
     try {
       const resp = await axios.get(url)
       return resp.data.result
